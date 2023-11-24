@@ -1,3 +1,4 @@
+import LogoImg from '../../assets/logo.jpg'
 import {Link} from 'react-router-dom'
 import {FiUser, FiLogIn} from 'react-icons/fi'
 export function Header(){
@@ -8,7 +9,7 @@ export function Header(){
       <div className="w-full flex items-center justify-center h-16 bg-white drop-shadow mb-4">
         <header className="flex w-full max-w-7xl items-center justify-between px-4 mx-auto">
             <Link to="/">
-                <h1>Hope Child</h1>
+                <img src={LogoImg} alt="logo do site" />
             </Link>
            
             {!loadingAuth && signed &&(
