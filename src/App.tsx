@@ -8,6 +8,8 @@ import {New} from './pages/dashboard/new';
 
 import {Layout} from './components/layout';
 
+import { Private } from "./routes/private";
+
 const router = createBrowserRouter([
   {
     element: <Layout/>,
@@ -22,11 +24,11 @@ const router = createBrowserRouter([
       },
       {
         path:"/dashboard",
-        element:<Dashboard/>
+        element:<Private><Dashboard/></Private>
       },
       {
         path:"/dashboard/new",
-        element: <New/>
+        element:<Private><New/></Private>
       },
       
     ]
