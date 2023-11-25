@@ -13,9 +13,13 @@ import { AuthContext } from '../../contexts/AuthContext'
 
 
 const schema = z.object({
-  name: z.string().nonempty("o campo nome é obrigatorio"),
-  email: z.string().email("Insira um email valido").nonempty("O campo obrigatorio"),
-  password: z.string().min(6, "Senha deve ter pelo menos 6 caracteres").nonempty("Campo senha é obrigatorio")
+  name: z.string().nonempty("CAMPO OBRIGATORIO"),
+  email: z.string().email("Insira um email valido").nonempty("CAMPO OBRIGATORIO"),
+  password: z.string().min(6, "Senha deve ter pelo menos 6 caracteres").refine((value)=> /[!@#$%^&*()_+{}[\]:;<>,.?~\\/-]/.test(value), {
+    message: "senha invalida"
+  }),
+  telefone: z.string().min(11, "DIGITE UM TELEFONE VALIDO").nonempty("CAMPO OBRIGATORIO"),
+  cnpj: z.string().min(14, "DIGITE UM CNPJ VALIDO").nonempty("CAMPO OBRIGATORIO")
 })
 
 type FormData = z.infer<typeof schema>
@@ -45,7 +49,7 @@ createUserWithEmailAndPassword(auth, data.email, data.password).then(async(user)
   handleInfoUser({
     name: data.name,
     email: data.email,
-    uid: user.user.uid
+    uid: user.user.uid,
   })
   console.log("Cadastrado com sucesso!!")
   navigate("/dashboard", {replace: true})
@@ -91,9 +95,27 @@ createUserWithEmailAndPassword(auth, data.email, data.password).then(async(user)
             <div className='mb-3'>
               <Input
               type="password"
-              placeholder="digite sua senha..."
+              placeholder="Ex: !exempl@"
               name="password"
               error={errors.password?.message}
+              register={register}
+              />
+            </div>
+            <div className='mb-3'>
+              <Input
+              type="telefone"
+              placeholder="digite seu telefone..."
+              name="telefone"
+              error={errors.telefone?.message}
+              register={register}
+              />
+            </div>
+            <div className='mb-3'>
+              <Input
+              type="cnpj"
+              placeholder="Ex:XX.XXX.XXX/0001-XX"
+              name="cnpj"
+              error={errors.cnpj?.message}
               register={register}
               />
             </div>

@@ -8,7 +8,7 @@ import {New} from './pages/dashboard/new';
 
 import {Layout} from './components/layout';
 
-import { Private } from "./routes/private";
+import { Private } from "./routes/Private";
 
 const router = createBrowserRouter([
   {
@@ -19,7 +19,7 @@ const router = createBrowserRouter([
         element: <Home/>
       },
       {
-        path:"/donate",
+        path:"/donate/:id",
         element:<Donate/>
       },
       {
