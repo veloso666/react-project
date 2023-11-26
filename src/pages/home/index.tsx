@@ -2,9 +2,11 @@ import Container from "../../components/container"
 import { useState, useEffect } from "react"
 import { Link } from "react-router-dom"
 
-import { collection, getDocs, orderBy, query  } from "firebase/firestore"
+import { collection, getDocs, orderBy, query, where } from "firebase/firestore"
 import { db } from "../../services/FirebaseConnection"
 export function Home(){
+const [input, SetInput] = useState()
+
 
   interface OngsProps{
     id:string;
@@ -24,37 +26,74 @@ export function Home(){
   const  [ongs, setOngs] = useState<OngsProps[]>([])
 
   useEffect(()=>{
-    function loadOngs(){
-      const ongRef = collection(db, 'ongs')
-      const queryRef = query(ongRef, orderBy("created", "desc"));
-
-      getDocs(queryRef).then((snapshot)=>{
-          let listongs = [] as OngsProps[];
-
-          snapshot.forEach(doc=>{
-            listongs.push({
-              id: doc.id,
-              descricao: doc.data().descricao,
-              cidade: doc.data().cidade,
-              titulo: doc.data().titulo,
-              data: doc.data().data,
-              images: doc.data().images,
-              uid: doc.data().uid
-            })
-          })
-          setOngs(listongs);
-      })
-    }
+    
     loadOngs();
   }, [])
+  function loadOngs(){
+    const ongRef = collection(db, 'ongs')
+    const queryRef = query(ongRef, orderBy("created", "desc"));
+
+    getDocs(queryRef).then((snapshot)=>{
+        const listongs = [] as OngsProps[];
+
+        snapshot.forEach(doc=>{
+          listongs.push({
+            id: doc.id,
+            descricao: doc.data().descricao,
+            cidade: doc.data().cidade,
+            titulo: doc.data().titulo,
+            data: doc.data().data,
+            images: doc.data().images,
+            uid: doc.data().uid
+          })
+        })
+        setOngs(listongs);
+    })
+  }
+
+  async function handleSearchOng(){
+    if(input === ""){
+      loadOngs();
+      return;
+    }
+
+    setOngs([]);
+    
+    const q = query(collection(db, "ongs"), where ("name", ">=", input),
+     where("name", "<=", input + "\uf8ff")
+     )
+    
+
+    const querySnapshot = await getDocs(q);
+
+    const listongs = [] as OngsProps[];
+
+    querySnapshot.forEach((doc) =>{
+      listongs.push({
+        id: doc.id,
+        descricao: doc.data().descricao,
+        cidade: doc.data().cidade,
+        titulo: doc.data().titulo,
+        data: doc.data().data,
+        images: doc.data().images,
+        uid: doc.data().uid
+      })
+    })
+    setOngs(listongs)
+  }
+
     return(
     <Container>
           <section className="bg-white p-4 rounded-lg w-full max-w-3xl mx-auto flex justify-center items-center gap-2">
             <input 
             className="w-full border-2 rounded-lg h-9 px-3"
-            placeholder="Pesquise ongs para doar..."/>
+            placeholder="Pesquise ongs para doar..."
+            value={input}
+            onChange={((e) =>SetInput(e.target.value))}
+            />
             <button
             className="bg-red-500 h-9 px-8 rounded-lg text-white font-medium text-lg"
+            onClick={handleSearchOng}
             >Buscar</button>
           </section>
           <h1 className="font-bold text-center mt-6 text-2xl mb-4">
